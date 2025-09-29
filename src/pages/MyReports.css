@@ -1,0 +1,67 @@
+.reports-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.reports-container h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin: 0;
+}
+
+.report-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.report-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-left: 5px solid #007bff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.report-details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.report-title {
+  font-weight: 600;
+}
+
+.report-date {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.report-status {
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-completed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.reports-container h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin: 0;
+}

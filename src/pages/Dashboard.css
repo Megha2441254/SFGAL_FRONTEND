@@ -1,0 +1,103 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: #f0f2f5;
+  color: #333;
+}
+
+.employee-main-content {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: none;
+}
+
+.dashboard-split-screen {
+  display: flex;
+  padding:50px;
+  gap: 30px;
+}
+
+.dashboard-column {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+}
+
+.dashboard-left-column {
+  flex: 0 0 300px; /* Fixed width for the left column */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dashboard-right-column {
+  flex: 1; /* Takes up remaining space */
+}
+
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 15px;
+}
+
+.user-pic {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #dee2e7;
+  padding: 3px;
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.profile-details p {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #555;
+  text-align: center;
+}
+
+.dashboard-nav-card {
+  display: flex;
+  flex-direction: column;
+  
+      width: 58%;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+    padding: 10px 50px 10px 25px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+     flex-grow: 1; /* Makes the card take up all available vertical space */
+  justify-content: center; /* Centers items vertically within the card */
+  gap: 5px;
+  align-items: flex-start;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 10px  15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.nav-item:hover {
+  background-color: #e2e6ea;
+}
+
+.nav-icon {
+  font-size: 1.2rem;
+  margin-right: 15px;
+  color: #007bff;
+}

@@ -93,7 +93,7 @@ const About = () => {
                 <FaFemale className="team-icon" />
                 <div className="team-details">
                   <h3>Kalyani Tummala</h3>
-                  <p className="team-role">Developer</p>
+                  <p className="team-role">Team Member</p>
                 </div>
               </div>
               <div className="flip-card-back">
@@ -110,7 +110,7 @@ const About = () => {
                 <FaMale className="team-icon" />
                 <div className="team-details">
                   <h3>Shanmukha Tellakula</h3>
-                  <p className="team-role">UX/UI Designer</p>
+                  <p className="team-role">Team Member</p>
                 </div>
               </div>
               <div className="flip-card-back">
@@ -127,11 +127,11 @@ const About = () => {
                 <FaFemale className="team-icon" />
                 <div className="team-details">
                   <h3>Gowthami Korra</h3>
-                  <p className="team-role">Quality Assurance</p>
+                  <p className="team-role">Team Member</p>
                 </div>
               </div>
               <div className="flip-card-back">
-                <h3 className="team-name">Gowthami Korra</h3>
+                <h3 className="team-name">Gouthami Korra</h3>
                 <p className="team-about-text">About me</p>
               </div>
             </div>

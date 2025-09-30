@@ -22,6 +22,7 @@ import LeaveRequest from './Leaverequest'; // Import the LeaveRequest component
 import HelpDesk from './Helpdesk'; // Import the HelpDesk component
 import MyReports from './MyReports';
 import MyTasks from './MyTasks';
+import Login from './Login';
 
 // Sample data for the graph
 const sampleEmployeeData = {

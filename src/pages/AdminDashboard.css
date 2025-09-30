@@ -218,11 +218,11 @@
 }
 
 .admin-employee-table {
-  width: 100%;
+  width: 100%; /* Important: Tells the table to stretch across its entire container */
   border-collapse: collapse;
   margin-top: 15px;
+  table-layout: auto; /* Lets the browser adjust column widths naturally */
 }
-
 .admin-employee-table th, .admin-employee-table td {
   padding: 12px 15px;
   text-align: left;
@@ -254,7 +254,16 @@
   color: #721c24;
 }
 
-.admin-action-btn {
+.admin-action-btn2{
+  padding: 6px 10px;
+  margin-right: 5px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.admin-action-btn1{
   padding: 6px 10px;
   margin-right: 5px;
   border: none;
@@ -267,8 +276,73 @@
   background-color: #3498db;
   color: white;
 }
+.admin-action-btn3{
+  padding: 6px 16px;
+  margin-right: 5px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  background-color: #db4234;
+  color: white;
+}
+.admin-action-btn2{
+  background-color: #2fb5c7;
+  color: white;
+}
+.admin-action-btn1{
+  background-color: #34db74;
+  color: white;
+}
+
+.admin-view-btn {
+  background-color: #2ecc71; /* New: Green color for 'Save' action */
+  color: white;
+}
 
 .admin-delete-logs-btn {
-  background-color: #e74c3c;
+  background-color: #cd3625;
   color: white;
+}
+
+/* --- 5. NEW STYLES FOR USER DELETION --- */
+
+/* --- NEW STYLES FOR USER DELETION --- */
+
+/* Style for the main permanent delete button on the Overview card */
+.admin-delete-user-btn {
+  /* Using a prominent red for permanent action */
+  background-color: #c0392b; /* Darker red */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 15px;
+  transition: background-color 0.3s;
+  width: 100%; /* Full width on the card */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.admin-delete-user-btn:hover {
+  background-color: #e74c3c; /* Brighter red on hover */
+}
+
+/* Style for the button in the Actions column of the table (inherits from admin-action-btn) */
+.admin-action-btn.admin-delete-user-btn {
+    background-color: #e74c3c; /* A slightly standard red for table actions */
+    color: white;
+    padding: 6px 10px;
+    margin-right: 0;
+}
+
+/* Add style for the details card, as it seems to be missing in your provided CSS */
+.admin-employee-details-card {
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  margin-top: 20px;
 }

@@ -14,6 +14,9 @@ function Dashboard({ onLogout }) {
   const [employees, setEmployees] = useState([]);
   const [filteredEmployee, setFilteredEmployee] = useState(null);
   const [message, setMessage] = useState('');
+   const [editingRfid, setEditingRfid] = useState({ employee_id: null, rfid_value: '' });
+  const [rfidMessage, setRfidMessage] = useState(''); // To show success/error for the update
+
 
   const [gateAccessEnabled, setGateAccessEnabled] = useState(true);
   const [openingHours, setOpeningHours] = useState('06:00 - 22:00');
@@ -35,9 +38,9 @@ function Dashboard({ onLogout }) {
   }), []);
 
   const recentActivity = [
-    { id: 1, user: 'John Doe', action: 'Entered Gate A', time: '10:15 AM' },
-    { id: 2, user: 'Jane Smith', action: 'Exited Gate B', time: '10:45 AM' },
-    { id: 3, user: 'Mark Lee', action: 'Entered Gate C', time: '11:00 AM' },
+    { id: 1, user: 'Gouthami', action: 'Entered Gate A', time: '10:15 AM' },
+    { id: 2, user: 'Meghana', action: 'Exited Gate B', time: '10:45 AM' },
+    { id: 3, user: 'Kalyani', action: 'Entered Gate C', time: '11:00 AM' },
   ];
 
   const kpiData = {
@@ -79,27 +82,92 @@ function Dashboard({ onLogout }) {
     setMessage('');
   };
 
-  const handleDelete = async () => {
-    if (!filteredEmployee) return;
-    if (!window.confirm(`Delete logs for ${filteredEmployee.employee_id}?`)) return;
+  // In Dashboard.jsx (Near your other handlers like handleSearch)
+
+const handleUpdateRfid = async (employeeId, newRfid) => {
+    // 1. Basic validation
+    if (!newRfid.trim()) {
+        setRfidMessage('RFID tag cannot be empty.');
+        setTimeout(() => setRfidMessage(''), 3000);
+        return;
+    }
+
+    // 2. API Call (Verify this URL and method against your backend)
+    try {
+        const response = await fetch(`https://localhost:7215/api/Rfidtag/UpdateRfid/${employeeId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ RfidTag: newRfid }),
+        });
+
+        if (!response.ok) {
+            // Read the error message from the body if available
+            const errorResult = await response.json(); 
+            throw new Error(errorResult.message || 'Failed to update RFID tag.');
+        }
+        
+        // 3. Success: Update local state (Optimistic UI update)
+        setEmployees(prevEmployees =>
+            prevEmployees.map(emp =>
+                emp.employee_id === employeeId ? { ...emp, rfid_tag: newRfid } : emp
+            )
+        );
+
+        setRfidMessage(`✅ UID for ${employeeId} updated successfully.`);
+        setEditingRfid({ employee_id: null, rfid_value: '' }); // Exit edit mode
+        setTimeout(() => setRfidMessage(''), 3000);
+
+    } catch (error) {
+        console.error('Error updating RFID:', error);
+        setRfidMessage(`❌ Error updating UID/RfidTag: ${error.message}`);
+        setTimeout(() => setRfidMessage(''), 5000);
+    }
+};
+  // ... (Lines 118-120: before the old handleDelete)
+
+// New, reusable function to PERMANENTLY delete a user
+const handleDeleteUser = async (employeeId, fullName) => {
+    // IMPORTANT: Assuming your backend API for full user deletion is: 
+    // https://localhost:7215/api/User/DeleteUser/{employeeId}
+    const deleteApiUrl = `https://localhost:7215/api/Delete/users/employee/${employeeId}`;
+    
+    if (!window.confirm(`PERMANENTLY delete user ${fullName} (ID: ${employeeId}) from the database? This action cannot be undone.`)) {
+        return;
+    }
 
     try {
-      const response = await fetch(`https://localhost:7215/api/Delete/users/employee/${filteredEmployee.employee_id}`, {
-        method: 'DELETE',
-      });
-      const result = await response.json();
-      if (result.success) {
-        setMessage('✅ Access logs deleted successfully.');
-        setFilteredEmployee(null);
-        setSearchTerm('');
-      } else {
-        setMessage(result.message || '❌ Failed to delete access logs.');
-      }
+        const response = await fetch(deleteApiUrl, {
+            method: 'DELETE',
+        });
+        
+        const result = await response.json();
+
+        if (response.ok) { // Check for HTTP 200/204 success status
+            // 1. Update UI: Remove the user from the local state
+            setEmployees(prevEmployees => 
+                prevEmployees.filter(emp => emp.employee_id !== employeeId)
+            );
+            
+            // 2. Clear selected employee details card if the deleted user was displayed
+            if (filteredEmployee && filteredEmployee.employee_id === employeeId) {
+                setFilteredEmployee(null);
+                setSearchTerm('');
+            }
+
+            setMessage(`✅ User ${fullName} permanently deleted successfully.`);
+        } else {
+            // Handle API errors (e.g., 404 Not Found, 400 Bad Request)
+            setMessage(result.message || `❌ Failed to delete user ${employeeId}.`);
+        }
     } catch (error) {
-      console.error('Error deleting employee:', error);
-      setMessage('❌ Error deleting access logs.');
+        console.error('Error deleting user:', error);
+        setMessage('❌ Error connecting to the server for user deletion.');
     }
-  };
+};
+// ... (after the new handleDeleteUser)
+
 
   useEffect(() => {
     if (activeView === 'reports' && chartRef.current) {
@@ -132,12 +200,14 @@ function Dashboard({ onLogout }) {
     setAuthorizedUsers(authorizedUsers.filter(u => u !== user));
   };
 
+  // ... (Lines 378 - 500 in your AdminDashboard.jsx)
+
   const renderRightColumnContent = () => {
     switch (activeView) {
       case 'employees':
         return (
           <>
-            
+            <h2 className="admin-content-title">Employee Management</h2>
 
             <input
               type="text"
@@ -147,6 +217,10 @@ function Dashboard({ onLogout }) {
               className="admin-table-search-input"
             />
             <p className="admin-results-count">{filteredEmployeesList.length} Employees Found</p>
+            {/* Display status message for RFID updates or general success/error */}
+            {rfidMessage && <p className="admin-system-message">{rfidMessage}</p>}
+            {message && <p className="admin-system-message">{message}</p>} {/* Added general message display */}
+
 
             <table className="admin-employee-table">
               <thead>
@@ -155,7 +229,8 @@ function Dashboard({ onLogout }) {
                   <th>Name</th>
                   <th>Department</th>
                   <th>Status</th>
-                 
+                  <th>UID/RfidTag</th> 
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -169,15 +244,67 @@ function Dashboard({ onLogout }) {
                         {emp.access_status}
                       </span>
                     </td>
+                    
+                    {/* ---------------------------------------------------------------- */}
+                    {/* 💡 RESTORED: UID/RfidTag COLUMN LOGIC (The Fix) 💡 */}
+                    {/* ---------------------------------------------------------------- */}
                     <td>
-                      
+                      {editingRfid.employee_id === emp.employee_id ? (
+                        // Edit Mode: Show input field and Save button
+                        <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
+                          <input
+                            type="text"
+                            value={editingRfid.rfid_value}
+                            // Assuming you have setEditingRfid function in your state
+                            onChange={(e) => setEditingRfid(prev => ({ ...prev, rfid_value: e.target.value }))}
+                            placeholder="Enter New UID"
+                            style={{ padding: '5px', width: '150px', border: '1px solid #ddd', borderRadius: '4px' }}
+                          />
+                          <button
+                            // Assuming you have handleUpdateRfid function defined
+                            onClick={() => handleUpdateRfid(emp.employee_id, editingRfid.rfid_value)}
+                            className="admin-action-btn1" 
+                          >
+                            Save
+                          </button>
+                        </div>
+                      ) : (
+                        // Display Mode: Show current tag and Add/Edit button
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ minWidth: '100px', fontWeight: emp.rfid_tag ? 'normal' : 'bold', color: emp.rfid_tag ? '#333' : '#e74c3c' }}>
+                            {/* Display rfid_tag (assuming your employee object now includes it), or 'Not Set' */}
+                            {emp.rfid_tag || 'Not Set'} 
+                          </span>
+                          <button
+                            onClick={() => {
+                              // Set the employee ID and the current tag value to activate edit mode
+                              setEditingRfid({ employee_id: emp.employee_id, rfid_value: emp.rfid_tag || '' });
+                              setRfidMessage(''); // Clear any previous message
+                            }}
+                            className="admin-action-btn2">
+                            {emp.rfid_tag ? 'Edit' : 'Add'}
+                          </button>
+                        </div>
+                      )}
                     </td>
+                    {/* ---------------------------------------------------------------- */}
+
+                    {/* Action Button (Delete User) */}
+                    <td>
+                        <button
+                              onClick={() => handleUpdateRfid(emp.employee_id, editingRfid.rfid_value)}
+                              className="admin-action-btn3" >
+                              Delete User
+                          </button>
+                      </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </>
         );
+
+    
 
       case 'access':
         return (
